@@ -1,0 +1,157 @@
+<!-- 
+		Name: Daniel Rouse-Rudd
+		Date: 5/01/2018
+		This is a browser based game based on Alien vs Prdator
+ -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Blast-A-Xenomorph (CSCI2447)</title>
+    
+	<link href="css/game.css" rel="stylesheet" />
+
+	  <script src="js/jquery-3.3.1.js"></script>
+	  <script src="js/jquery-ui.js"></script> 
+
+	  <script>
+		  $("#gamespace").css('cursor','url(img/pred.png)', 'auto');
+		  //Keeps track of score
+		  var score = 0;
+		 
+		 //keeps track of time
+		  var time = 30;
+		  
+          $(document).ready( function() {
+			 
+			 //Starts game
+              $("#start_button").click(function(){
+                  start();
+              });
+			  
+			  //Stops user from clicking start multiple times and allowing game to run faster than it should
+			  $('#start_button').on('click',function() {
+				  $(this).prop("disabled",true);
+			  });
+			  
+			  //increments score
+			  $("#gamespace").on("click", "img", function(){
+				if (time > -1) {
+					incScore();
+				$(this).hide('explode', { pieces: 12 }, 500);
+				}
+			  });
+			  
+			  
+          });
+		 
+		 // keep count for img ids
+		 var count = 0;
+		 
+		 //adds mole to gamespace
+		  function addMole() {
+			  if (time > -1) {
+				count++;
+				var mole = document.createElement("img");
+				mole.setAttribute("src", "img/xeno.png");
+				mole.setAttribute("id", "img" + count)
+				posX = randPosX();
+				posY = randPosY();
+				mole.style.top = posX + "px";
+				mole.style.left = posY + "px";
+				$("#gamespace").append(mole);
+				again = setTimeout("addMole()", randInt());
+				setTimeout(function(){
+				$(mole).fadeOut(300);
+				}, randIntDiss());
+				again = clearTimeout();
+				if (time == -1){
+					setTimeout(function(){
+					$(mole).fadeOut(300);
+					});
+				}
+			  }
+		  }
+		 
+	
+		 
+		 //generates random int for random moles
+          function randInt(){
+			  return Math.floor(Math.random() * 2001);
+		  }
+		  function randIntDiss(){
+			  return Math.floor(Math.random() * 3001);
+		  }
+		 
+		 //gernerates random int for moles x pos
+          function randPosX() {
+              return Math.floor(Math.random() * 301);
+          }
+		 
+		 //generates random int for moles y pos
+          function randPosY() {
+              return Math.floor(Math.random() * 601);
+          }
+		 
+		 //increments score for when you click mole
+          function incScore(){
+              if (time > -1) {
+			  score++;
+			  $("#score").html(score + " pts");
+			  }
+          }
+		 
+		 //decreases time by one each second
+		  function decTime(){
+			  if (time > -1) {
+				$("#timer").css("display", "block");
+				$("#timer").html(time + " seconds left");
+				again = setTimeout("decTime()", 1000);
+				
+				time--;
+				
+			  }
+			  else if (time == -1) {
+					if(confirm('You killed ' + score + ' Xenomorphs! If you would like to play again, press Okay')){
+						window.location.reload();  
+					}
+				}
+          }
+		 //function to start game
+		  function start() {
+			addMole();
+			decTime();
+		  }
+		  
+
+
+	  </script>
+
+
+  </head>
+  <body>
+
+	<div id="content">
+
+		<h1>Blast-A-Xenomorph</h1>
+		
+		<p>As a New Blood you must prove your worth to your clan. Blast all the xenomorphs on the screen as they pop up.
+		After clicking "start", you will have 30 seconds to click
+		as many Xenomorphs as you can. The Xenomorphs appear randomly so be ready! </p>
+		
+		<div id="controls">
+			<span id="score">0 pts</span>
+			<button type="button" id="start_button" onclick="image()">Start!</button>
+		</div>
+		
+		<div id="timer">30 seconds left</div>
+		
+		<div id="gamespace">
+			<h2></h2>
+			
+		</div>
+		
+	</div>
+  </body>
+</html>
